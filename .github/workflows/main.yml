@@ -1,0 +1,28 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: '15 14 * * *' # Esto ejecutará el workflow cada hora. Puedes ajustarlo a tus necesidades.
+  workflow_dispatch: # Esto permite ejecutar el workflow manualmente desde la interfaz de GitHub
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: CatalistaPOO/fundamentosjavagetafe # Reemplaza con tu usuario y nombre de repositorio
+          token: ${{ secrets.PAT_TOKEN }} # Ver siguiente paso sobre el token
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/serraguti/fundamentosjavagetafe.git # Reemplaza con el usuario y nombre del repositorio original
+
+      - name: Fetch upstream changes
+        run: git fetch upstream
+
+      - name: Merge upstream changes
+        run: git merge upstream/main # O upstream/master, dependiendo de la rama principal del repositorio original
+
+      - name: Push changes
+        run: git push origin main # O origin master, dependiendo de la rama principal de tu fork
